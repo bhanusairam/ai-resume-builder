@@ -31,7 +31,7 @@ async def generate_resume(request: Request):
         if not api_key:
             return JSONResponse({"error": "OPENROUTER_API_KEY not set"}, status_code=500)
         prompt = "Write a professional resume in clean HTML with inline styles only. No markdown, no backticks, only pure HTML. For: Name: " + str(data.get("name","")) + ", Email: " + str(data.get("email","")) + ", Phone: " + str(data.get("phone","")) + ", LinkedIn: " + str(data.get("linkedin","")) + ", Education: " + str(data.get("education","")) + ", Skills: " + str(data.get("skills","")) + ", Experience: " + str(data.get("experience","")) + ", Projects: " + str(data.get("projects","")) + ", Certifications: " + str(data.get("certifications",""))
-        payload = json.dumps({"model": "meta-llama/llama-3.2-3b-instruct:free", "messages": [{"role": "user", "content": prompt}]}).encode("utf-8")
+        payload = json.dumps({"model": "google/gemma-3-4b-it:free", "messages": [{"role": "user", "content": prompt}]}).encode("utf-8")
         req = urllib.request.Request("https://openrouter.ai/api/v1/chat/completions", data=payload, headers={"Content-Type": "application/json", "Authorization": "Bearer " + api_key, "HTTP-Referer": "https://ai-resume-builder-psi-kohl.vercel.app"}, method="POST")
         try:
             with urllib.request.urlopen(req) as response:
