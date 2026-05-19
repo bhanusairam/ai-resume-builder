@@ -1,8 +1,6 @@
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
-import os
-import json
-import urllib.request
+import os, json, urllib.request
 
 app = FastAPI()
 
@@ -20,22 +18,23 @@ async def add_cors(request, call_next):
 
 @app.get("/")
 def root():
-    key = os.environ.get("ANTHROPIC_API_KEY", "")
-    return {"status": "ok", "key_set": bool(key)}
+    return {"status": "ok", "key_set": bool(os.environ.get("GEMINI_API_KEY", ""))}
 
 @app.post("/api/generate-resume")
 async def generate_resume(request: Request):
     try:
         data = await request.json()
-        api_key = os.environ.get("ANTHROPIC_API_KEY", "")
+        api_key = os.environ.get("GEMINI_API_KEY", "")
         if not api_key:
-            return JSONResponse({"error": "API key not set"}, status_code=500)
-        prompt = "Write a professional resume in HTML with inline styles for: Name: " + str(data.get("name","")) + " Email: " + str(data.get("email","")) + " Phone: " + str(data.get("phone","")) + " Skills: " + str(data.get("skills","")) + " Education: " + str(data.get("education","")) + " Experience: " + str(data.get("experience","")) + " Projects: " + str(data.get("projects","")) + " Certifications: " + str(data.get("certifications",""))
-        payload = json.dumps({"model": "claude-haiku-4-5-20251001","max_tokens": 2000,"messages": [{"role": "user", "content": prompt}]}).encode("utf-8")
-        req = urllib.request.Request("https://api.anthropic.com/v1/messages",data=payload,headers={"Content-Type": "application/json","x-api-key": api_key,"anthropic-version": "2023-06-01"},method="POST")
+            return JSONResponse({"error": "GEMINI_API_KEY not set"}, status_code=500)
+        prompt = "Write a professional resume in clean HTML with inline styles only. For: Name: " + str(data.get("name","")) + ", Email: " + str(data.get("email","")) + ", Phone: " + str(data.get("phone","")) + ", LinkedIn: " + str(data.get("linkedin","")) + ", Education: " + str(data.get("education","")) + ", Skills: " + str(data.get("skills","")) + ", Experience: " + str(data.get("experience","")) + ", Projects: " + str(data.get("projects","")) + ", Certifications: " + str(data.get("certifications",""))
+        payload = json.dumps({"contents": [{"parts": [{"text": prompt}]}]}).encode("utf-8")
+        url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" + api_key
+        req = urllib.request.Request(url, data=payload, headers={"Content-Type": "application/json"}, method="POST")
         with urllib.request.urlopen(req) as response:
             result = json.loads(response.read().decode("utf-8"))
-            return {"resume_html": result["content"][0]["text"]}
+            text = result["candidates"][0]["content"]["parts"][0]["text"]
+            return {"resume_html": text}
     except Exception as e:
         import traceback
         return JSONResponse({"error": str(e), "trace": traceback.format_exc()}, status_code=500)
