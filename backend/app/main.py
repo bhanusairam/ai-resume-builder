@@ -46,12 +46,9 @@ async def generate_resume(request: Request):
         )
 
         MODELS = [
-            "deepseek/deepseek-r1:free",
-            "deepseek/deepseek-chat:free",
-            "meta-llama/llama-3.3-70b-instruct:free",
-            "mistralai/mistral-small-3.1-24b-instruct:free",
-            "qwen/qwen3-8b:free",
-            "google/gemma-3-12b-it:free",
+            "openrouter/free",
+            "meta-llama/llama-3.1-8b-instruct:free",
+            "qwen/qwen-2.5-7b-instruct:free",
         ]
 
         errors = []
@@ -75,7 +72,7 @@ async def generate_resume(request: Request):
                     },
                     method="POST"
                 )
-                with urllib.request.urlopen(req, timeout=45) as response:
+                with urllib.request.urlopen(req, timeout=60) as response:
                     result = json.loads(response.read().decode("utf-8"))
                     text = result["choices"][0]["message"]["content"]
                     text = text.replace("```html","").replace("```","").strip()
