@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 import anthropic
@@ -19,13 +19,14 @@ def root():
     return {"status": "ok"}
 
 @app.post("/api/generate-resume")
-async def generate_resume(data: dict):
+async def generate_resume(request: Request):
     try:
+        data = await request.json()
         api_key = os.environ.get("ANTHROPIC_API_KEY")
         if not api_key:
             return JSONResponse({"error": "API key missing"}, status_code=500)
         client = anthropic.Anthropic(api_key=api_key)
-        prompt = f"""Create a professional resume in clean HTML format for:
+        prompt = f"""Create a professional resume in clean HTML with inline styles for:
 Name: {data.get("name", "")}
 Email: {data.get("email", "")}
 Phone: {data.get("phone", "")}
@@ -35,8 +36,7 @@ Skills: {data.get("skills", "")}
 Projects: {data.get("projects", "")}
 Certifications: {data.get("certifications", "")}
 Experience: {data.get("experience", "")}
-
-Generate a complete professional resume with proper HTML formatting. Use inline styles only."""
+Generate a complete professional resume."""
         message = client.messages.create(
             model="claude-haiku-4-5-20251001",
             max_tokens=2000,
