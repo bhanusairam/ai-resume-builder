@@ -30,21 +30,39 @@ async def generate_resume(request: Request):
         api_key = os.environ.get("OPENROUTER_API_KEY", "")
         if not api_key:
             return JSONResponse({"error": "OPENROUTER_API_KEY not set"}, status_code=500)
-        
-        prompt = "Write a professional resume in clean HTML with inline styles only. No markdown, no backticks, only pure HTML. For: Name: " + str(data.get("name","")) + ", Email: " + str(data.get("email","")) + ", Phone: " + str(data.get("phone","")) + ", LinkedIn: " + str(data.get("linkedin","")) + ", Education: " + str(data.get("education","")) + ", Skills: " + str(data.get("skills","")) + ", Experience: " + str(data.get("experience","")) + ", Projects: " + str(data.get("projects","")) + ", Certifications: " + str(data.get("certifications",""))
-        
+
+        prompt = (
+            "Write a professional resume in clean HTML with inline styles only. "
+            "No markdown, no backticks, only pure HTML starting with <div>. "
+            "For: Name: " + str(data.get("name", "")) +
+            ", Email: " + str(data.get("email", "")) +
+            ", Phone: " + str(data.get("phone", "")) +
+            ", LinkedIn: " + str(data.get("linkedin", "")) +
+            ", Education: " + str(data.get("education", "")) +
+            ", Skills: " + str(data.get("skills", "")) +
+            ", Experience: " + str(data.get("experience", "")) +
+            ", Projects: " + str(data.get("projects", "")) +
+            ", Certifications: " + str(data.get("certifications", ""))
+        )
+
+        # These are verified working free models on OpenRouter as of 2025-2026
         models = [
-            "google/gemma-3-4b-it:free",
-            "google/gemma-3-1b-it:free",
+            "meta-llama/llama-3.1-8b-instruct:free",
+            "meta-llama/llama-3.2-3b-instruct:free",
+            "qwen/qwen-2.5-7b-instruct:free",
             "mistralai/mistral-7b-instruct:free",
-            "qwen/qwen-2-7b-instruct:free"
+            "google/gemma-2-9b-it:free",
         ]
-        
+
         last_error = ""
         for model in models:
             try:
                 logger.info("Trying model: " + model)
-                payload = json.dumps({"model": model, "messages": [{"role": "user", "content": prompt}], "max_tokens": 2000}).encode("utf-8")
+                payload = json.dumps({
+                    "model": model,
+                    "messages": [{"role": "user", "content": prompt}],
+                    "max_tokens": 2000
+                }).encode("utf-8")
                 req = urllib.request.Request(
                     "https://openrouter.ai/api/v1/chat/completions",
                     data=payload,
@@ -59,7 +77,7 @@ async def generate_resume(request: Request):
                 with urllib.request.urlopen(req, timeout=30) as response:
                     result = json.loads(response.read().decode("utf-8"))
                     text = result["choices"][0]["message"]["content"]
-                    text = text.replace("```html","").replace("```","").strip()
+                    text = text.replace("```html", "").replace("```", "").strip()
                     logger.info("Success with model: " + model)
                     return {"resume_html": text}
             except urllib.error.HTTPError as e:
@@ -71,8 +89,9 @@ async def generate_resume(request: Request):
                 last_error = str(e)
                 logger.error("Model " + model + " error: " + str(e))
                 continue
-        
+
         return JSONResponse({"error": "All models failed", "last_error": last_error}, status_code=500)
+
     except Exception as e:
         import traceback
         return JSONResponse({"error": str(e), "trace": traceback.format_exc()}, status_code=500)
