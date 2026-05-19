@@ -1,18 +1,21 @@
 from fastapi import FastAPI, Request
-from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 import anthropic
 import os
 
 app = FastAPI()
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=False,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+@app.middleware("http")
+async def add_cors(request, call_next):
+    if request.method == "OPTIONS":
+        res = JSONResponse({})
+        res.headers["Access-Control-Allow-Origin"] = "*"
+        res.headers["Access-Control-Allow-Methods"] = "POST, GET, OPTIONS"
+        res.headers["Access-Control-Allow-Headers"] = "*"
+        return res
+    res = await call_next(request)
+    res.headers["Access-Control-Allow-Origin"] = "*"
+    return res
 
 @app.get("/")
 def root():
@@ -26,21 +29,17 @@ async def generate_resume(request: Request):
         if not api_key:
             return JSONResponse({"error": "API key missing"}, status_code=500)
         client = anthropic.Anthropic(api_key=api_key)
-        prompt = f"""Create a professional resume in clean HTML with inline styles for:
-Name: {data.get("name", "")}
-Email: {data.get("email", "")}
-Phone: {data.get("phone", "")}
-LinkedIn: {data.get("linkedin", "")}
-Education: {data.get("education", "")}
-Skills: {data.get("skills", "")}
-Projects: {data.get("projects", "")}
-Certifications: {data.get("certifications", "")}
-Experience: {data.get("experience", "")}
-Generate a complete professional resume."""
         message = client.messages.create(
             model="claude-haiku-4-5-20251001",
             max_tokens=2000,
-            messages=[{"role": "user", "content": prompt}]
+            messages=[{"role": "user", "content": f"""Make a professional HTML resume with inline styles for:
+Name: {data.get("name","")}
+Email: {data.get("email","")}
+Phone: {data.get("phone","")}
+Education: {data.get("education","")}
+Skills: {data.get("skills","")}
+Projects: {data.get("projects","")}
+Experience: {data.get("experience","")}"""}]
         )
         return {"resume_html": message.content[0].text}
     except Exception as e:
