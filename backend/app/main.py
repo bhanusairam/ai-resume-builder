@@ -26,28 +26,16 @@ async def generate_resume(request: Request):
         data = await request.json()
         api_key = os.environ.get("ANTHROPIC_API_KEY")
         if not api_key:
-            return JSONResponse({"error": "ANTHROPIC_API_KEY not set"}, status_code=500)
-        
+            return JSONResponse({"error": "API key not set"}, status_code=500)
         import anthropic
         client = anthropic.Anthropic(api_key=api_key)
-        
-        name = data.get("name", "")
-        email = data.get("email", "")
-        phone = data.get("phone", "")
-        linkedin = data.get("linkedin", "")
-        education = data.get("education", "")
-        skills = data.get("skills", "")
-        projects = data.get("projects", "")
-        certifications = data.get("certifications", "")
-        experience = data.get("experience", "")
-        
-        prompt = "Create a professional resume in clean HTML with inline styles only. No external CSS. For: Name: " + name + ", Email: " + email + ", Phone: " + phone + ", LinkedIn: " + linkedin + ", Education: " + education + ", Skills: " + skills + ", Projects: " + projects + ", Certifications: " + certifications + ", Experience: " + experience
-
+        prompt = "Write a professional resume in HTML with inline styles for: Name: " + str(data.get("name","")) + " Email: " + str(data.get("email","")) + " Skills: " + str(data.get("skills","")) + " Education: " + str(data.get("education","")) + " Experience: " + str(data.get("experience","")) + " Projects: " + str(data.get("projects",""))
         message = client.messages.create(
             model="claude-haiku-4-5-20251001",
-            max_tokens=2000,
+            max_tokens=1500,
             messages=[{"role": "user", "content": prompt}]
         )
         return {"resume_html": message.content[0].text}
     except Exception as e:
-        return JSONResponse({"error": str(e), "type": type(e).__name__}, status_code=500)
+        import traceback
+        return JSONResponse({"error": str(e), "trace": traceback.format_exc()}, status_code=500)
