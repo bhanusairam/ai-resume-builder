@@ -29,7 +29,7 @@ async def generate_resume(request: Request):
             return JSONResponse({"error": "GEMINI_API_KEY not set"}, status_code=500)
         prompt = "Write a professional resume in clean HTML with inline styles only. For: Name: " + str(data.get("name","")) + ", Email: " + str(data.get("email","")) + ", Phone: " + str(data.get("phone","")) + ", LinkedIn: " + str(data.get("linkedin","")) + ", Education: " + str(data.get("education","")) + ", Skills: " + str(data.get("skills","")) + ", Experience: " + str(data.get("experience","")) + ", Projects: " + str(data.get("projects","")) + ", Certifications: " + str(data.get("certifications",""))
         payload = json.dumps({"contents": [{"parts": [{"text": prompt}]}]}).encode("utf-8")
-        url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" + api_key
+        url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=" + api_key
         req = urllib.request.Request(url, data=payload, headers={"Content-Type": "application/json"}, method="POST")
         with urllib.request.urlopen(req) as response:
             result = json.loads(response.read().decode("utf-8"))
