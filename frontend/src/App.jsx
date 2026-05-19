@@ -10,7 +10,7 @@ function App() {
   const handleGenerate = async (formData) => {
     setLoading(true);
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || "https://resume-backend-eck9.onrender.com";
+      const apiUrl = "https://resume-backend-eck9.onrender.com";
       const res = await fetch(`${apiUrl}/api/generate-resume`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -87,3 +87,4 @@ function App() {
   );
 }
 export default App;
+
