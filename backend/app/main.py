@@ -1,6 +1,9 @@
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
-import os, json, urllib.request, urllib.error
+import os, json, urllib.request, urllib.error, traceback, logging
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 app = FastAPI()
 
@@ -24,10 +27,13 @@ def root():
 async def generate_resume(request: Request):
     try:
         data = await request.json()
+        logger.info("Got request for: " + str(data.get("name","")))
         api_key = os.environ.get("GROQ_API_KEY", "")
         if not api_key:
+            logger.error("NO API KEY FOUND")
             return JSONResponse({"error": "GROQ_API_KEY not set"}, status_code=500)
-        prompt = "Write a professional resume in clean HTML with inline styles only. No markdown, no backticks, only pure HTML. For: Name: " + str(data.get("name","")) + ", Email: " + str(data.get("email","")) + ", Phone: " + str(data.get("phone","")) + ", LinkedIn: " + str(data.get("linkedin","")) + ", Education: " + str(data.get("education","")) + ", Skills: " + str(data.get("skills","")) + ", Experience: " + str(data.get("experience","")) + ", Projects: " + str(data.get("projects","")) + ", Certifications: " + str(data.get("certifications",""))
+        logger.info("API key found, calling Groq...")
+        prompt = "Write a professional resume in clean HTML with inline styles only. No markdown. For: Name: " + str(data.get("name","")) + ", Email: " + str(data.get("email","")) + ", Skills: " + str(data.get("skills","")) + ", Education: " + str(data.get("education","")) + ", Experience: " + str(data.get("experience","")) + ", Projects: " + str(data.get("projects",""))
         payload = json.dumps({"model": "llama3-8b-8192", "messages": [{"role": "user", "content": prompt}], "max_tokens": 2000}).encode("utf-8")
         req = urllib.request.Request("https://api.groq.com/openai/v1/chat/completions", data=payload, headers={"Content-Type": "application/json", "Authorization": "Bearer " + api_key}, method="POST")
         try:
@@ -35,10 +41,12 @@ async def generate_resume(request: Request):
                 result = json.loads(response.read().decode("utf-8"))
                 text = result["choices"][0]["message"]["content"]
                 text = text.replace("```html","").replace("```","").strip()
+                logger.info("Success!")
                 return {"resume_html": text}
         except urllib.error.HTTPError as e:
             body = e.read().decode("utf-8")
+            logger.error("Groq HTTP error: " + str(e) + " body: " + body)
             return JSONResponse({"error": str(e), "body": body}, status_code=500)
     except Exception as e:
-        import traceback
+        logger.error("Exception: " + str(e) + "\n" + traceback.format_exc())
         return JSONResponse({"error": str(e), "trace": traceback.format_exc()}, status_code=500)
