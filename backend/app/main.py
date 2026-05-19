@@ -2,6 +2,12 @@ from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 import os
 
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except:
+    pass
+
 app = FastAPI()
 
 @app.middleware("http")
@@ -18,13 +24,14 @@ async def add_cors(request, call_next):
 
 @app.get("/")
 def root():
-    return {"status": "ok", "key_set": bool(os.environ.get("ANTHROPIC_API_KEY"))}
+    key = os.environ.get("ANTHROPIC_API_KEY", "")
+    return {"status": "ok", "key_set": bool(key), "key_prefix": key[:10] if key else "none"}
 
 @app.post("/api/generate-resume")
 async def generate_resume(request: Request):
     try:
         data = await request.json()
-        api_key = os.environ.get("ANTHROPIC_API_KEY")
+        api_key = os.environ.get("ANTHROPIC_API_KEY", "")
         if not api_key:
             return JSONResponse({"error": "API key not set"}, status_code=500)
         import anthropic
