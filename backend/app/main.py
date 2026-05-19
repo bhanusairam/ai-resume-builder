@@ -21,7 +21,7 @@ async def add_cors(request, call_next):
 @app.get("/")
 def root():
     key = os.environ.get("OPENROUTER_API_KEY", "")
-    return {"status": "ok", "key_set": bool(key), "key_prefix": key[:8] if key else ""}
+    return {"status": "ok", "key_set": bool(key)}
 
 @app.post("/api/generate-resume")
 async def generate_resume(request: Request):
@@ -46,17 +46,18 @@ async def generate_resume(request: Request):
         )
 
         MODELS = [
-            "meta-llama/llama-3.1-8b-instruct:free",
-            "meta-llama/llama-3.2-3b-instruct:free",
-            "qwen/qwen-2.5-7b-instruct:free",
-            "mistralai/mistral-7b-instruct:free",
-            "google/gemma-2-9b-it:free",
+            "deepseek/deepseek-r1:free",
+            "deepseek/deepseek-chat:free",
+            "meta-llama/llama-3.3-70b-instruct:free",
+            "mistralai/mistral-small-3.1-24b-instruct:free",
+            "qwen/qwen3-8b:free",
+            "google/gemma-3-12b-it:free",
         ]
 
         errors = []
         for model in MODELS:
             try:
-                logger.info("Trying model: " + model)
+                logger.info("Trying: " + model)
                 payload = json.dumps({
                     "model": model,
                     "messages": [{"role": "user", "content": prompt}],
@@ -81,7 +82,7 @@ async def generate_resume(request: Request):
                     idx = text.find("<")
                     if idx > 0:
                         text = text[idx:]
-                    logger.info("Success with: " + model)
+                    logger.info("Success: " + model)
                     return {"resume_html": text, "model_used": model, "template": template}
 
             except urllib.error.HTTPError as e:
