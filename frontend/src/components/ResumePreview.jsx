@@ -4,10 +4,10 @@ function ResumePreview({ resume, onBack }) {
   const ref = useRef(null);
   const handlePrint = () => {
     const w = window.open("","_blank");
-    w.document.write(`<html><head><title>My Resume</title><style>body{font-family:Georgia,serif;margin:40px;line-height:1.7;color:#1a1a1a;}h1,h2,h3{color:#1a1a1a;}</style></head><body>${ref.current.innerHTML}</body></html>`);
+    w.document.write(`<html><head><title>My Resume</title><style>body{font-family:Georgia,serif;margin:40px;line-height:1.7;color:#1a1a1a;}</style></head><body>${ref.current.innerHTML}</body></html>`);
     w.document.close(); w.print();
   };
-  const content = resume?.resume_html || resume?.resume || JSON.stringify(resume);
+  const content = resume?.resume_html || resume?.resume || JSON.stringify(resume, null, 2);
   return (
     <div>
       <div className="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
