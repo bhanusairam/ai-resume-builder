@@ -1,10 +1,9 @@
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
+from fastapi.middleware.cors import CORSMiddleware
 import os, json, urllib.request, urllib.error, logging, traceback
 import django
-from django.conf import settings
 
-# Setup Django ORM inside FastAPI
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "backend.settings")
 django.setup()
 
@@ -14,17 +13,13 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 app = FastAPI()
 
-@app.middleware("http")
-async def add_cors(request, call_next):
-    if request.method == "OPTIONS":
-        res = JSONResponse({})
-        res.headers["Access-Control-Allow-Origin"] = "*"
-        res.headers["Access-Control-Allow-Methods"] = "POST, GET, OPTIONS"
-        res.headers["Access-Control-Allow-Headers"] = "*"
-        return res
-    res = await call_next(request)
-    res.headers["Access-Control-Allow-Origin"] = "*"
-    return res
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.get("/")
 def root():
@@ -75,7 +70,7 @@ async def generate_resume(request: Request):
                     headers={
                         "Content-Type": "application/json",
                         "Authorization": "Bearer " + api_key,
-                        "HTTP-Referer": "https://resume-ai-v1.vercel.app",
+                        "HTTP-Referer": "https://ai-resume-builder-psi-kohl.vercel.app",
                         "X-Title": "ResumeAI"
                     },
                     method="POST"
@@ -89,7 +84,6 @@ async def generate_resume(request: Request):
                         text = text[idx:]
                     logger.info("Success: " + model)
 
-                    # ✅ Save to database
                     try:
                         profile = StudentProfile.objects.create(
                             name=data.get("name", ""),
@@ -103,7 +97,7 @@ async def generate_resume(request: Request):
                             profile=profile,
                             content=text
                         )
-                        logger.info("✅ Resume saved to database for: " + data.get("name", ""))
+                        logger.info("Resume saved for: " + data.get("name", ""))
                     except Exception as db_error:
                         logger.error("DB save error: " + str(db_error))
 
@@ -125,8 +119,6 @@ async def generate_resume(request: Request):
         logger.error("Fatal: " + traceback.format_exc())
         return JSONResponse({"error": str(e), "trace": traceback.format_exc()}, status_code=500)
 
-
-# ✅ New endpoint to get all saved resumes
 @app.get("/api/resumes")
 def get_all_resumes():
     try:
