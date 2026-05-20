@@ -43,7 +43,7 @@ async def generate_resume(request: Request):
         )
 
         MODELS = [
-            "openai/gpt-oss-20b:free",
+            "openrouter/free",
             "deepseek/deepseek-v4-flash:free",
             "meta-llama/llama-3.3-70b-instruct:free",
             "nvidia/nemotron-3-super-120b-a12b:free",
