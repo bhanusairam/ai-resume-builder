@@ -27,6 +27,12 @@ const TEMPLATE_HTML = {
   creative: (d) => `<div style="font-family:'Segoe UI',sans-serif;background:#f8fafc;min-height:700px;border-left:8px solid #e11d48"><div style="padding:40px 40px 18px"><div style="font-size:32px;font-weight:900;color:#0f172a">${d.name}</div><div style="width:52px;height:4px;background:#e11d48;margin:10px 0"></div><div style="font-size:12px;color:#64748b">${d.email}${d.phone?" · "+d.phone:""}${d.linkedin?" · "+d.linkedin:""}</div></div><div style="padding:0 40px 40px;display:grid;grid-template-columns:1fr 220px;gap:20px"><div><div style="background:#fff;border-radius:10px;padding:22px;margin-bottom:14px;border:1px solid #f1f5f9"><div style="font-size:11px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:#e11d48;margin-bottom:10px">Experience</div><div style="font-size:14px;color:#334155;line-height:1.7;white-space:pre-line">${d.experience||"—"}</div></div><div style="background:#fff;border-radius:10px;padding:22px;border:1px solid #f1f5f9"><div style="font-size:11px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:#e11d48;margin-bottom:10px">Projects</div><div style="font-size:14px;color:#334155;line-height:1.7;white-space:pre-line">${d.projects||"—"}</div></div></div><div><div style="background:#fff;border-radius:10px;padding:16px;margin-bottom:12px;border:1px solid #f1f5f9"><div style="font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:#e11d48;margin-bottom:8px">Education</div><div style="font-size:12px;color:#334155;line-height:1.6">${d.education||"—"}</div></div><div style="background:#fff;border-radius:10px;padding:16px;margin-bottom:12px;border:1px solid #f1f5f9"><div style="font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:#e11d48;margin-bottom:8px">Skills</div><div>${pills(d.skills||"","#fff1f2","#e11d48")}</div></div><div style="background:#fff;border-radius:10px;padding:16px;border:1px solid #f1f5f9"><div style="font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:#e11d48;margin-bottom:8px">Certifications</div><div style="font-size:12px;color:#334155;line-height:1.6;white-space:pre-line">${d.certifications||"—"}</div></div></div></div></div>`,
 };
 
+const GithubIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+    <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+  </svg>
+);
+
 export default function App() {
   const [step, setStep] = useState(0);
   const [form, setForm] = useState({ name:"", email:"", phone:"", linkedin:"", education:"", skills:"", certifications:"", experience:"", projects:"" });
@@ -62,13 +68,20 @@ export default function App() {
     <div style={{minHeight:"100vh",background:"#0a0a14",color:"#e2e8f0",fontFamily:"'Segoe UI',system-ui,sans-serif",padding:"0 16px 60px"}}>
       <style>{`@media print{.noprint{display:none!important}}`}</style>
 
-      <div className="noprint" style={{textAlign:"center",padding:"36px 0 24px"}}>
-        <div style={{fontSize:36,fontWeight:800,background:"linear-gradient(135deg,#818cf8,#f472b6)",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>⚡ ResumeAI</div>
-        <div style={{color:"#64748b",fontSize:14,marginTop:4}}>6 professional templates • Click to switch instantly</div>
+      <div className="noprint" style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"24px 8px 8px",maxWidth:920,margin:"0 auto"}}>
+        <div>
+          <div style={{fontSize:28,fontWeight:800,background:"linear-gradient(135deg,#818cf8,#f472b6)",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>⚡ ResumeAI</div>
+          <div style={{color:"#64748b",fontSize:12,marginTop:2}}>6 templates • Instant preview</div>
+        </div>
+        <a href="https://github.com/bhanusairam/ai-resume-builder" target="_blank" rel="noreferrer"
+          style={{display:"flex",alignItems:"center",gap:8,padding:"9px 18px",borderRadius:12,border:"1px solid #334155",background:"#111827",color:"#94a3b8",textDecoration:"none",fontSize:13,fontWeight:600,transition:"all .2s"}}>
+          <GithubIcon />
+          View on GitHub
+        </a>
       </div>
 
       {step < 4 && (
-        <div className="noprint" style={{display:"flex",justifyContent:"center",alignItems:"flex-start",gap:0,marginBottom:28}}>
+        <div className="noprint" style={{display:"flex",justifyContent:"center",alignItems:"flex-start",gap:0,margin:"20px 0 28px"}}>
           {STEPS.map((s,i) => (
             <React.Fragment key={i}>
               <div style={{display:"flex",flexDirection:"column",alignItems:"center"}}>
@@ -138,12 +151,15 @@ export default function App() {
                 <h2 style={{color:"#818cf8",margin:"0 0 4px",fontSize:20}}>✅ Your Resume</h2>
                 <p style={{color:"#475569",margin:0,fontSize:13}}>Switch template below — updates instantly</p>
               </div>
-              <div style={{display:"flex",gap:8}}>
+              <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
                 {backBtn(3)}
+                <a href="https://github.com/bhanusairam/ai-resume-builder" target="_blank" rel="noreferrer"
+                  style={{display:"flex",alignItems:"center",gap:6,padding:"10px 16px",borderRadius:12,border:"1px solid #334155",background:"#111827",color:"#94a3b8",textDecoration:"none",fontSize:13,fontWeight:600}}>
+                  <GithubIcon /> GitHub
+                </a>
                 <button onClick={()=>window.print()} style={{padding:"10px 22px",fontWeight:700,fontSize:14,borderRadius:12,border:"none",background:"linear-gradient(135deg,#6366f1,#8b5cf6)",color:"#fff",cursor:"pointer"}}>🖨️ Print / PDF</button>
               </div>
             </div>
-
             <div style={{background:"#111827",borderRadius:16,padding:"16px 20px",border:"1px solid #1e293b",marginBottom:20}}>
               <p style={{color:"#64748b",fontSize:11,margin:"0 0 12px",fontWeight:700,textTransform:"uppercase",letterSpacing:"1px"}}>Switch Template</p>
               <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
@@ -158,8 +174,11 @@ export default function App() {
               </div>
             </div>
           </div>
-
           <div style={{background:"white",borderRadius:16,overflow:"hidden",boxShadow:"0 24px 80px rgba(0,0,0,.7)"}} dangerouslySetInnerHTML={{__html:resume}}/>
+          <div className="noprint" style={{textAlign:"center",marginTop:24,color:"#334155",fontSize:13}}>
+            Built with ⚡ ResumeAI •
+            <a href="https://github.com/bhanusairam/ai-resume-builder" target="_blank" rel="noreferrer" style={{color:"#6366f1",textDecoration:"none",marginLeft:6}}>View Source on GitHub</a>
+          </div>
         </div>
       )}
     </div>
