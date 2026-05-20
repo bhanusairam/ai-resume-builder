@@ -54,9 +54,9 @@ async def generate_resume(request: Request):
         )
 
         MODELS = [
-            "openrouter/free",
-            "meta-llama/llama-3.1-8b-instruct:free",
-            "qwen/qwen-2.5-7b-instruct:free",
+            "deepseek/deepseek-r1:free",
+            "deepseek/deepseek-v3:free",
+            "meta-llama/llama-3.3-70b-instruct:free",
         ]
 
         errors = []
