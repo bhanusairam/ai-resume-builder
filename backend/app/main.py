@@ -1,6 +1,14 @@
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 import os, json, urllib.request, urllib.error, logging, traceback
+import django
+from django.conf import settings
+
+# Setup Django ORM inside FastAPI
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "backend.settings")
+django.setup()
+
+from app.models import StudentProfile, ResumeVersion
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -80,6 +88,25 @@ async def generate_resume(request: Request):
                     if idx > 0:
                         text = text[idx:]
                     logger.info("Success: " + model)
+
+                    # ✅ Save to database
+                    try:
+                        profile = StudentProfile.objects.create(
+                            name=data.get("name", ""),
+                            email=data.get("email", ""),
+                            phone=data.get("phone", ""),
+                            skills=str(data.get("skills", "")),
+                            education=str(data.get("education", "")),
+                            projects=str(data.get("projects", ""))
+                        )
+                        ResumeVersion.objects.create(
+                            profile=profile,
+                            content=text
+                        )
+                        logger.info("✅ Resume saved to database for: " + data.get("name", ""))
+                    except Exception as db_error:
+                        logger.error("DB save error: " + str(db_error))
+
                     return {"resume_html": text, "model_used": model, "template": template}
 
             except urllib.error.HTTPError as e:
@@ -97,3 +124,23 @@ async def generate_resume(request: Request):
     except Exception as e:
         logger.error("Fatal: " + traceback.format_exc())
         return JSONResponse({"error": str(e), "trace": traceback.format_exc()}, status_code=500)
+
+
+# ✅ New endpoint to get all saved resumes
+@app.get("/api/resumes")
+def get_all_resumes():
+    try:
+        profiles = StudentProfile.objects.prefetch_related("resumeversion_set").all()
+        result = []
+        for profile in profiles:
+            for rv in profile.resumeversion_set.all():
+                result.append({
+                    "id": rv.id,
+                    "name": profile.name,
+                    "email": profile.email,
+                    "phone": profile.phone,
+                    "created_at": str(rv.created_at),
+                })
+        return {"resumes": result}
+    except Exception as e:
+        return JSONResponse({"error": str(e)}, status_code=500)

@@ -1,2 +1,6 @@
 fastapi
 uvicorn
+django
+djangorestframework
+django-cors-headers
+djangorestframework-simplejwt
