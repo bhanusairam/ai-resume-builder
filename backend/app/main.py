@@ -43,9 +43,9 @@ async def generate_resume(request: Request):
         )
 
         MODELS = [
-            "google/gemma-3-27b-it:free",
-            "mistralai/mistral-7b-instruct:free",
-            "qwen/qwen3-8b:free",
+            "openai/gpt-oss-20b:free",
+            "deepseek/deepseek-v4-flash:free",
+            "meta-llama/llama-3.3-70b-instruct:free",
         ]
 
         errors = []
