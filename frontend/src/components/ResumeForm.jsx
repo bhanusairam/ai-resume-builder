@@ -1,31 +1,63 @@
 import React, { useState } from "react";
 
 function ResumeForm({ onGenerate, loading }) {
-  const [formData, setFormData] = useState({name:"",email:"",phone:"",linkedin:"",education:"",skills:"",projects:"",certifications:"",experience:""});
+  const [formData, setFormData] = useState({
+    name:"", email:"", phone:"", linkedin:"",
+    ssc_school:"", ssc_board:"", ssc_percentage:"", ssc_year:"",
+    inter_college:"", inter_board:"", inter_percentage:"", inter_year:"",
+    btech_college:"", btech_university:"", btech_branch:"", btech_cgpa:"", btech_year:"",
+    skills:"", projects:"", certifications:"", experience:""
+  });
   const [step, setStep] = useState(0);
 
-  const steps = [
-    {title:"Personal Info",icon:"👤",desc:"Your basic contact details",fields:[
-      {key:"name",label:"Full Name",placeholder:"e.g. Bhanu Sairam",type:"input"},
-      {key:"email",label:"Email Address",placeholder:"e.g. bhanu@email.com",type:"input"},
-      {key:"phone",label:"Phone Number",placeholder:"e.g. +91 9999999999",type:"input"},
-      {key:"linkedin",label:"LinkedIn URL",placeholder:"e.g. linkedin.com/in/bhanu",type:"input"},
-    ]},
-    {title:"Education & Skills",icon:"🎓",desc:"Your academic background and technical skills",fields:[
-      {key:"education",label:"Education",placeholder:"e.g. B.Tech in CSE, XYZ University, 2024, CGPA: 8.5",type:"textarea"},
-      {key:"skills",label:"Technical Skills",placeholder:"e.g. Python, React, Node.js, SQL, Machine Learning, Git...",type:"textarea"},
-    ]},
-    {title:"Experience & Projects",icon:"💼",desc:"Work experience, projects and certifications",fields:[
-      {key:"experience",label:"Work Experience",placeholder:"e.g. Software Intern at XYZ Corp (June 2023) - Built REST APIs...",type:"textarea"},
-      {key:"projects",label:"Projects",placeholder:"e.g. AI Resume Builder - Built using React + FastAPI + Claude AI...",type:"textarea"},
-      {key:"certifications",label:"Certifications",placeholder:"e.g. AWS Certified, Google Data Analytics...",type:"textarea"},
-    ]}
-  ];
-
-  const handleChange = (e) => setFormData({...formData,[e.target.name]:e.target.value});
+  const handleChange = (e) => setFormData({...formData, [e.target.name]: e.target.value});
 
   const inp = {background:"rgba(255,255,255,0.06)",border:"1px solid rgba(255,255,255,0.12)",borderRadius:"10px",color:"white",padding:"12px 16px",width:"100%",fontSize:"0.95rem",outline:"none"};
   const lbl = {color:"rgba(255,255,255,0.7)",fontSize:"0.82rem",fontWeight:"600",marginBottom:"6px",letterSpacing:"0.5px",textTransform:"uppercase",display:"block"};
+  const sectionHead = {color:"#a78bfa",fontWeight:"700",fontSize:"0.9rem",marginBottom:"10px",marginTop:"6px",paddingBottom:"6px",borderBottom:"1px solid rgba(167,139,250,0.2)"};
+  const focusIn = (e) => { e.target.style.borderColor="rgba(167,139,250,0.6)"; e.target.style.background="rgba(167,139,250,0.08)"; };
+  const focusOut = (e) => { e.target.style.borderColor="rgba(255,255,255,0.12)"; e.target.style.background="rgba(255,255,255,0.06)"; };
+
+  const Field = ({name, placeholder, col="col-md-6"}) => (
+    <div className={col}>
+      <label style={lbl}>{name.replace(/_/g," ").replace(/\b\w/g,c=>c.toUpperCase())}</label>
+      <input style={inp} name={name} value={formData[name]} onChange={handleChange}
+        placeholder={placeholder} onFocus={focusIn} onBlur={focusOut}/>
+    </div>
+  );
+
+  const TextArea = ({name, placeholder}) => (
+    <div className="col-12">
+      <label style={lbl}>{name.replace(/_/g," ").replace(/\b\w/g,c=>c.toUpperCase())}</label>
+      <textarea style={{...inp,height:"100px",resize:"vertical"}} name={name}
+        value={formData[name]} onChange={handleChange} placeholder={placeholder}
+        onFocus={focusIn} onBlur={focusOut}/>
+    </div>
+  );
+
+  const steps = [
+    { title:"Personal Info", icon:"??", desc:"Your basic contact details" },
+    { title:"Education",     icon:"??", desc:"SSC, Inter and B.Tech details" },
+    { title:"Skills & Work", icon:"??", desc:"Skills, experience, projects and certifications" },
+  ];
+
+  const buildEducation = () => {
+    const parts = [];
+    if (formData.btech_college) parts.push(`B.Tech in ${formData.btech_branch||"Engineering"}, ${formData.btech_college}, ${formData.btech_university||""}, Graduating: ${formData.btech_year||""}, CGPA: ${formData.btech_cgpa||""}`);
+    if (formData.inter_college) parts.push(`Intermediate (${formData.inter_board||""}), ${formData.inter_college}, ${formData.inter_percentage||""}%, Year: ${formData.inter_year||""}`);
+    if (formData.ssc_school)   parts.push(`SSC (${formData.ssc_board||""}), ${formData.ssc_school}, ${formData.ssc_percentage||""}%, Year: ${formData.ssc_year||""}`);
+    return parts.join("\n");
+  };
+
+  const handleGenerate = (template) => {
+    const payload = {
+      name: formData.name, email: formData.email, phone: formData.phone,
+      linkedin: formData.linkedin, education: buildEducation(),
+      skills: formData.skills, experience: formData.experience,
+      projects: formData.projects, certifications: formData.certifications, template,
+    };
+    onGenerate(payload);
+  };
 
   return (
     <div>
@@ -34,7 +66,7 @@ function ResumeForm({ onGenerate, loading }) {
           <React.Fragment key={i}>
             <div onClick={()=>setStep(i)} style={{display:"flex",alignItems:"center",gap:"8px",cursor:"pointer",padding:"8px 14px",borderRadius:"20px",background:step===i?"rgba(167,139,250,0.2)":"transparent",border:step===i?"1px solid rgba(167,139,250,0.4)":"1px solid transparent",transition:"all 0.3s"}}>
               <div style={{width:"26px",height:"26px",borderRadius:"50%",display:"flex",alignItems:"center",justifyContent:"center",fontSize:"0.75rem",fontWeight:"700",background:i<step?"linear-gradient(135deg,#a78bfa,#7c3aed)":step===i?"rgba(167,139,250,0.3)":"rgba(255,255,255,0.1)",color:i<step?"white":step===i?"#a78bfa":"rgba(255,255,255,0.4)",border:step===i?"1px solid #a78bfa":"none"}}>
-                {i<step?"✓":i+1}
+                {i<step?"?":i+1}
               </div>
               <span className="d-none d-sm-inline" style={{fontSize:"0.85rem",fontWeight:"600",color:step===i?"#a78bfa":"rgba(255,255,255,0.4)"}}>{s.title}</span>
             </div>
@@ -49,32 +81,74 @@ function ResumeForm({ onGenerate, loading }) {
         <p style={{color:"rgba(255,255,255,0.5)",fontSize:"0.85rem",margin:0}}>{steps[step].desc}</p>
       </div>
 
-      <div className="row g-3 mb-4">
-        {steps[step].fields.map(f=>(
-          <div key={f.key} className={f.type==="input"?"col-md-6":"col-12"}>
-            <label style={lbl}>{f.label}</label>
-            {f.type==="input"
-              ? <input style={inp} name={f.key} value={formData[f.key]} onChange={handleChange} placeholder={f.placeholder} onFocus={e=>{e.target.style.borderColor="rgba(167,139,250,0.6)";e.target.style.background="rgba(167,139,250,0.08)"}} onBlur={e=>{e.target.style.borderColor="rgba(255,255,255,0.12)";e.target.style.background="rgba(255,255,255,0.06)"}}/>
-              : <textarea style={{...inp,height:"100px",resize:"vertical"}} name={f.key} value={formData[f.key]} onChange={handleChange} placeholder={f.placeholder} onFocus={e=>{e.target.style.borderColor="rgba(167,139,250,0.6)";e.target.style.background="rgba(167,139,250,0.08)"}} onBlur={e=>{e.target.style.borderColor="rgba(255,255,255,0.12)";e.target.style.background="rgba(255,255,255,0.06)"}}/>
-            }
+      {step===0 && (
+        <div className="row g-3 mb-4">
+          <Field name="name"     placeholder="e.g. Bhanu Sairam"/>
+          <Field name="email"    placeholder="e.g. bhanu@email.com"/>
+          <Field name="phone"    placeholder="e.g. +91 9999999999"/>
+          <Field name="linkedin" placeholder="e.g. linkedin.com/in/bhanu"/>
+        </div>
+      )}
+
+      {step===1 && (
+        <div className="mb-4">
+          <div style={sectionHead}>?? B.Tech / Degree</div>
+          <div className="row g-3 mb-4">
+            <Field name="btech_college"    placeholder="e.g. XYZ Engineering College"/>
+            <Field name="btech_university" placeholder="e.g. JNTUH / Osmania University"/>
+            <Field name="btech_branch"     placeholder="e.g. Computer Science and Engineering" col="col-12"/>
+            <Field name="btech_cgpa"       placeholder="e.g. 8.5"/>
+            <Field name="btech_year"       placeholder="e.g. 2025"/>
           </div>
-        ))}
-      </div>
+          <div style={sectionHead}>?? Intermediate (11th and 12th)</div>
+          <div className="row g-3 mb-4">
+            <Field name="inter_college"    placeholder="e.g. Sri Chaitanya Junior College"/>
+            <Field name="inter_board"      placeholder="e.g. TSBIE / APBIE"/>
+            <Field name="inter_percentage" placeholder="e.g. 92"/>
+            <Field name="inter_year"       placeholder="e.g. 2021"/>
+          </div>
+          <div style={sectionHead}>?? SSC (10th)</div>
+          <div className="row g-3">
+            <Field name="ssc_school"      placeholder="e.g. Narayana High School"/>
+            <Field name="ssc_board"       placeholder="e.g. CBSE / SSC Board"/>
+            <Field name="ssc_percentage"  placeholder="e.g. 95"/>
+            <Field name="ssc_year"        placeholder="e.g. 2019"/>
+          </div>
+        </div>
+      )}
+
+      {step===2 && (
+        <div className="row g-3 mb-4">
+          <TextArea name="skills"         placeholder="e.g. Python, React, Node.js, SQL, Machine Learning, Git..."/>
+          <TextArea name="experience"     placeholder="e.g. Software Intern at XYZ Corp (June 2023) - Built REST APIs..."/>
+          <TextArea name="projects"       placeholder="e.g. AI Resume Builder - Built using React + FastAPI + Claude AI..."/>
+          <TextArea name="certifications" placeholder="e.g. AWS Certified Developer, Google Data Analytics..."/>
+        </div>
+      )}
 
       <div className="d-flex justify-content-between align-items-center">
-        <button onClick={()=>setStep(s=>s-1)} disabled={step===0} className="btn px-4 py-2" style={{background:"rgba(255,255,255,0.06)",color:"rgba(255,255,255,0.6)",border:"1px solid rgba(255,255,255,0.12)",borderRadius:"10px",opacity:step===0?0.3:1,cursor:step===0?"not-allowed":"pointer"}}>← Back</button>
-        {step<steps.length-1
-          ? <button onClick={()=>setStep(s=>s+1)} className="btn px-5 py-2 fw-semibold" style={{background:"linear-gradient(135deg,#a78bfa,#7c3aed)",color:"white",border:"none",borderRadius:"10px"}}>Continue →</button>
-          : <button onClick={()=>onGenerate(formData)} disabled={loading} className="btn px-5 py-2 fw-semibold" style={{background:loading?"rgba(255,255,255,0.1)":"linear-gradient(135deg,#a78bfa,#7c3aed,#ec4899)",color:"white",border:"none",borderRadius:"10px",minWidth:"200px",cursor:loading?"not-allowed":"pointer",boxShadow:loading?"none":"0 4px 20px rgba(124,58,237,0.4)"}}>
-              {loading?<span><span className="spinner-border spinner-border-sm me-2"></span>Generating...</span>:"🚀 Generate My Resume"}
-            </button>
-        }
-      </div>
-
-      <div className="mt-3 p-3 rounded-3" style={{background:"rgba(167,139,250,0.08)",border:"1px solid rgba(167,139,250,0.15)"}}>
-        <p style={{color:"rgba(255,255,255,0.5)",fontSize:"0.8rem",margin:0}}>💡 <strong style={{color:"#a78bfa"}}>Tip:</strong> The more detail you add, the better your AI-generated resume will be.</p>
+        <button onClick={()=>setStep(s=>s-1)} disabled={step===0} className="btn px-4 py-2"
+          style={{background:"rgba(255,255,255,0.06)",color:"rgba(255,255,255,0.6)",border:"1px solid rgba(255,255,255,0.12)",borderRadius:"10px",opacity:step===0?0.3:1,cursor:step===0?"not-allowed":"pointer"}}>
+          Back
+        </button>
+        {step < steps.length-1 ? (
+          <button onClick={()=>setStep(s=>s+1)} className="btn px-4 py-2"
+            style={{background:"linear-gradient(135deg,#a78bfa,#7c3aed)",color:"white",border:"none",borderRadius:"10px",fontWeight:"600"}}>
+            Next
+          </button>
+        ) : (
+          <div className="d-flex gap-2 flex-wrap justify-content-end">
+            {["modern","classic","minimal","creative"].map(t=>(
+              <button key={t} onClick={()=>handleGenerate(t)} disabled={loading} className="btn px-3 py-2"
+                style={{background:"linear-gradient(135deg,#a78bfa,#7c3aed)",color:"white",border:"none",borderRadius:"10px",fontWeight:"600",fontSize:"0.85rem",opacity:loading?0.6:1,cursor:loading?"not-allowed":"pointer",textTransform:"capitalize"}}>
+                {loading?"Generating...":"Generate "+t.charAt(0).toUpperCase()+t.slice(1)}
+              </button>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
 }
+
 export default ResumeForm;
