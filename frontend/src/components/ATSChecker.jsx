@@ -181,7 +181,7 @@ export default function ATSChecker({ formData }) {
               <div style={{background:"rgba(34,197,94,0.08)",border:"1px solid rgba(34,197,94,0.25)",borderRadius:"10px",padding:"1.25rem"}}>
                 <div style={{fontWeight:"700",color:"#4ade80"}}>?? Job Match: {result.job_match_score}/100</div>
                 <p style={{color:"rgba(255,255,255,0.6)",fontSize:"0.85rem",margin:"0.4rem 0 0"}}>
-                  {result.job_match_score>=70?"Great match! Your resume aligns well with this job.":result.job_match_score>=50?"Moderate match. Add more keywords from the job description.":"Low match. Tailor your resume with more relevant skills and keywords."}
+                  {result.job_match_score>=70?"Great match!":result.job_match_score>=50?"Moderate match. Add more keywords.":"Low match. Tailor your resume with more relevant skills."}
                 </p>
               </div>
             )}
