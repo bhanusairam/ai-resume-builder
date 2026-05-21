@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+﻿import React, { useState } from "react";
 
 const inp = {background:"rgba(255,255,255,0.06)",border:"1px solid rgba(255,255,255,0.12)",borderRadius:"10px",color:"white",padding:"12px 16px",width:"100%",fontSize:"0.95rem",outline:"none"};
 const lbl = {color:"rgba(255,255,255,0.7)",fontSize:"0.82rem",fontWeight:"600",marginBottom:"6px",letterSpacing:"0.5px",textTransform:"uppercase",display:"block"};
@@ -41,9 +41,9 @@ function ResumeForm({ onGenerate, loading }) {
   const sectionHead = {color:"#a78bfa",fontWeight:"700",fontSize:"0.9rem",marginBottom:"10px",marginTop:"6px",paddingBottom:"6px",borderBottom:"1px solid rgba(167,139,250,0.2)"};
 
   const steps = [
-    { title:"Personal Info", icon:"??", desc:"Your basic contact details" },
-    { title:"Education",     icon:"??", desc:"SSC, Inter and B.Tech details" },
-    { title:"Skills & Work", icon:"??", desc:"Skills, experience, projects and certifications" },
+    { title:"Personal Info", icon:"🧑", desc:"Your basic contact details" },
+    { title:"Education",     icon:"🎓", desc:"SSC, Inter and B.Tech details" },
+    { title:"Skills & Work", icon:"💼", desc:"Skills, experience, projects and certifications" },
   ];
 
   const buildEducation = () => {
@@ -82,7 +82,7 @@ function ResumeForm({ onGenerate, loading }) {
       </div>
 
       <div className="text-center mb-4">
-        <div style={{fontSize:"1.8rem",marginBottom:"6px"}}>{steps[step].icon}</div>
+        
         <h5 style={{color:"white",fontWeight:"700",marginBottom:"4px"}}>{steps[step].title}</h5>
         <p style={{color:"rgba(255,255,255,0.5)",fontSize:"0.85rem",margin:0}}>{steps[step].desc}</p>
       </div>
@@ -154,3 +154,6 @@ function ResumeForm({ onGenerate, loading }) {
 }
 
 export default ResumeForm;
+
+
+
