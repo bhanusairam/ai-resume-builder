@@ -1,4 +1,4 @@
-﻿import React, { useState } from "react";
+import React, { useState } from "react";
 
 const inp = {background:"rgba(255,255,255,0.06)",border:"1px solid rgba(255,255,255,0.12)",borderRadius:"10px",color:"white",padding:"12px 16px",width:"100%",fontSize:"0.95rem",outline:"none"};
 const lbl = {color:"rgba(255,255,255,0.7)",fontSize:"0.82rem",fontWeight:"600",marginBottom:"6px",letterSpacing:"0.5px",textTransform:"uppercase",display:"block"};
@@ -59,7 +59,8 @@ function ResumeForm({ onGenerate, loading }) {
       name: formData.name, email: formData.email, phone: formData.phone,
       linkedin: formData.linkedin, education: buildEducation(),
       skills: formData.skills, experience: formData.experience,
-      projects: formData.projects, certifications: formData.certifications, template,
+      projects: formData.projects, certifications: formData.certifications,
+      template: "modern",
     };
     onGenerate(payload);
   };
@@ -99,39 +100,39 @@ function ResumeForm({ onGenerate, loading }) {
         <div className="mb-4">
           <div style={sectionHead}>?? B.Tech / Degree</div>
           <div className="row g-3 mb-4">
-            <Field name="btech_college"    placeholder="e.g. XYZ Engineering College"            value={formData.btech_college}    onChange={handleChange}/>
-            <Field name="btech_university" placeholder="e.g. JNTUH / Osmania University"         value={formData.btech_university} onChange={handleChange}/>
-            <Field name="btech_branch"     placeholder="e.g. Computer Science and Engineering"   value={formData.btech_branch}     onChange={handleChange} col="col-12"/>
-            <Field name="btech_cgpa"       placeholder="e.g. 8.5"                                value={formData.btech_cgpa}       onChange={handleChange}/>
-            <Field name="btech_year"       placeholder="e.g. 2025"                               value={formData.btech_year}       onChange={handleChange}/>
+            <Field name="btech_college"    placeholder="e.g. XYZ Engineering College"          value={formData.btech_college}    onChange={handleChange}/>
+            <Field name="btech_university" placeholder="e.g. JNTUH / Osmania University"       value={formData.btech_university} onChange={handleChange}/>
+            <Field name="btech_branch"     placeholder="e.g. Computer Science and Engineering" value={formData.btech_branch}     onChange={handleChange} col="col-12"/>
+            <Field name="btech_cgpa"       placeholder="e.g. 8.5"                              value={formData.btech_cgpa}       onChange={handleChange}/>
+            <Field name="btech_year"       placeholder="e.g. 2025"                             value={formData.btech_year}       onChange={handleChange}/>
           </div>
           <div style={sectionHead}>?? Intermediate (11th and 12th)</div>
           <div className="row g-3 mb-4">
-            <Field name="inter_college"    placeholder="e.g. Sri Chaitanya Junior College"       value={formData.inter_college}    onChange={handleChange}/>
-            <Field name="inter_board"      placeholder="e.g. TSBIE / APBIE"                      value={formData.inter_board}      onChange={handleChange}/>
-            <Field name="inter_percentage" placeholder="e.g. 92"                                 value={formData.inter_percentage} onChange={handleChange}/>
-            <Field name="inter_year"       placeholder="e.g. 2021"                               value={formData.inter_year}       onChange={handleChange}/>
+            <Field name="inter_college"    placeholder="e.g. Sri Chaitanya Junior College"     value={formData.inter_college}    onChange={handleChange}/>
+            <Field name="inter_board"      placeholder="e.g. TSBIE / APBIE"                    value={formData.inter_board}      onChange={handleChange}/>
+            <Field name="inter_percentage" placeholder="e.g. 92"                               value={formData.inter_percentage} onChange={handleChange}/>
+            <Field name="inter_year"       placeholder="e.g. 2021"                             value={formData.inter_year}       onChange={handleChange}/>
           </div>
           <div style={sectionHead}>?? SSC (10th)</div>
           <div className="row g-3">
-            <Field name="ssc_school"      placeholder="e.g. Narayana High School"               value={formData.ssc_school}      onChange={handleChange}/>
-            <Field name="ssc_board"       placeholder="e.g. CBSE / SSC Board"                   value={formData.ssc_board}       onChange={handleChange}/>
-            <Field name="ssc_percentage"  placeholder="e.g. 95"                                 value={formData.ssc_percentage}  onChange={handleChange}/>
-            <Field name="ssc_year"        placeholder="e.g. 2019"                               value={formData.ssc_year}        onChange={handleChange}/>
+            <Field name="ssc_school"      placeholder="e.g. Narayana High School"             value={formData.ssc_school}      onChange={handleChange}/>
+            <Field name="ssc_board"       placeholder="e.g. CBSE / SSC Board"                 value={formData.ssc_board}       onChange={handleChange}/>
+            <Field name="ssc_percentage"  placeholder="e.g. 95"                               value={formData.ssc_percentage}  onChange={handleChange}/>
+            <Field name="ssc_year"        placeholder="e.g. 2019"                             value={formData.ssc_year}        onChange={handleChange}/>
           </div>
         </div>
       )}
 
       {step===2 && (
         <div className="row g-3 mb-4">
-          <TextArea name="skills"         placeholder="e.g. Python, React, Node.js, SQL..."     value={formData.skills}         onChange={handleChange}/>
-          <TextArea name="experience"     placeholder="e.g. Software Intern at XYZ Corp..."     value={formData.experience}     onChange={handleChange}/>
+          <TextArea name="skills"         placeholder="e.g. Python, React, Node.js, SQL..."      value={formData.skills}         onChange={handleChange}/>
+          <TextArea name="experience"     placeholder="e.g. Software Intern at XYZ Corp..."      value={formData.experience}     onChange={handleChange}/>
           <TextArea name="projects"       placeholder="e.g. AI Resume Builder - React + FastAPI" value={formData.projects}       onChange={handleChange}/>
-          <TextArea name="certifications" placeholder="e.g. AWS Certified Developer..."         value={formData.certifications} onChange={handleChange}/>
+          <TextArea name="certifications" placeholder="e.g. AWS Certified Developer..."          value={formData.certifications} onChange={handleChange}/>
         </div>
       )}
 
-      <div className="d-flex justify-content-between align-items-center">
+      <div className="d-flex justify-content-between align-items-center mt-3">
         <button onClick={()=>setStep(s=>s-1)} disabled={step===0} className="btn px-4 py-2"
           style={{background:"rgba(255,255,255,0.06)",color:"rgba(255,255,255,0.6)",border:"1px solid rgba(255,255,255,0.12)",borderRadius:"10px",opacity:step===0?0.3:1,cursor:step===0?"not-allowed":"pointer"}}>
           Back
@@ -142,14 +143,10 @@ function ResumeForm({ onGenerate, loading }) {
             Next
           </button>
         ) : (
-          <div className="d-flex gap-2 flex-wrap justify-content-end">
-            {["modern","classic","minimal","creative"].map(t=>(
-              <button key={t} onClick={()=>handleGenerate(t)} disabled={loading} className="btn px-3 py-2"
-                style={{background:"linear-gradient(135deg,#a78bfa,#7c3aed)",color:"white",border:"none",borderRadius:"10px",fontWeight:"600",fontSize:"0.85rem",opacity:loading?0.6:1,cursor:loading?"not-allowed":"pointer",textTransform:"capitalize"}}>
-                {loading?"Generating...":"Generate "+t.charAt(0).toUpperCase()+t.slice(1)}
-              </button>
-            ))}
-          </div>
+          <button onClick={handleGenerate} disabled={loading} className="btn px-5 py-2"
+            style={{background:"linear-gradient(135deg,#a78bfa,#7c3aed,#ec4899)",color:"white",border:"none",borderRadius:"12px",fontWeight:"700",fontSize:"1rem",opacity:loading?0.6:1,cursor:loading?"not-allowed":"pointer",boxShadow:"0 4px 20px rgba(124,58,237,0.4)"}}>
+            {loading ? "? Generating..." : "? Generate Resume"}
+          </button>
         )}
       </div>
     </div>
@@ -157,4 +154,3 @@ function ResumeForm({ onGenerate, loading }) {
 }
 
 export default ResumeForm;
-
