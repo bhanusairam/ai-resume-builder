@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+﻿import React, { useState } from "react";
 
 const inp = {background:"rgba(255,255,255,0.06)",border:"1px solid rgba(255,255,255,0.12)",borderRadius:"10px",color:"white",padding:"12px 16px",width:"100%",fontSize:"0.95rem",outline:"none"};
 const lbl = {color:"rgba(255,255,255,0.7)",fontSize:"0.82rem",fontWeight:"600",marginBottom:"6px",letterSpacing:"0.5px",textTransform:"uppercase",display:"block"};
@@ -54,7 +54,7 @@ function ResumeForm({ onGenerate, loading }) {
     return parts.join("\n");
   };
 
-  const handleGenerate = (template) => {
+  const handleGenerate = () => {
     const payload = {
       name: formData.name, email: formData.email, phone: formData.phone,
       linkedin: formData.linkedin, education: buildEducation(),
@@ -157,3 +157,4 @@ function ResumeForm({ onGenerate, loading }) {
 }
 
 export default ResumeForm;
+
