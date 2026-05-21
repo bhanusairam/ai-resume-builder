@@ -97,3 +97,100 @@ async def generate_resume(request: Request):
     except Exception as e:
         logger.error("Fatal: " + traceback.format_exc())
         return JSONResponse({"error": str(e), "trace": traceback.format_exc()}, status_code=500)
+@app.post("/api/ats-score")
+async def ats_score(request: Request):
+    try:
+        data = await request.json()
+        resume = data.get("resume", "").strip()
+        job_desc = data.get("job_description", "").strip()
+
+        if not resume:
+            return JSONResponse({"error": "Resume text is required"}, status_code=400)
+
+        api_key = os.environ.get("OPENROUTER_API_KEY", "")
+        if not api_key:
+            return JSONResponse({"error": "OPENROUTER_API_KEY not set"}, status_code=500)
+
+        job_section = (
+            f"\nJob Description:\n{job_desc}\n"
+            if job_desc else ""
+        )
+
+        prompt = (
+            "You are an ATS (Applicant Tracking System) expert. "
+            "Analyze the resume below and return ONLY a valid JSON object. "
+            "No markdown, no explanation, no backticks. Just raw JSON.\n\n"
+            "Resume:\n" + resume + job_section +
+            "\n\nReturn this exact JSON structure:\n"
+            "{\n"
+            '  "score": <overall ATS score 0-100>,\n'
+            '  "breakdown": {\n'
+            '    "contact_info": {"score": <0-15>, "max": 15},\n'
+            '    "work_experience": {"score": <0-25>, "max": 25},\n'
+            '    "education": {"score": <0-20>, "max": 20},\n'
+            '    "skills": {"score": <0-20>, "max": 20},\n'
+            '    "formatting": {"score": <0-10>, "max": 10},\n'
+            '    "keywords": {"score": <0-10>, "max": 10}\n'
+            '  },\n'
+            '  "tips": [<3 to 5 short actionable tips as strings>]'
+            + (',\n  "job_match_score": <0-100>' if job_desc else "") +
+            "\n}"
+        )
+
+        MODELS = [
+            "openai/gpt-oss-20b:free",
+            "deepseek/deepseek-v4-flash:free",
+            "meta-llama/llama-3.3-70b-instruct:free",
+            "nvidia/nemotron-3-super-120b-a12b:free",
+            "z-ai/glm-4.5-air:free",
+            "qwen/qwen3-coder:free",
+        ]
+
+        errors = []
+        for model in MODELS:
+            try:
+                logger.info("ATS: Trying " + model)
+                payload = json.dumps({
+                    "model": model,
+                    "messages": [{"role": "user", "content": prompt}],
+                    "max_tokens": 800
+                }).encode("utf-8")
+
+                req = urllib.request.Request(
+                    "https://openrouter.ai/api/v1/chat/completions",
+                    data=payload,
+                    headers={
+                        "Content-Type": "application/json",
+                        "Authorization": "Bearer " + api_key,
+                        "HTTP-Referer": "https://ai-resume-builder-psi-kohl.vercel.app",
+                        "X-Title": "ResumeAI"
+                    },
+                    method="POST"
+                )
+                with urllib.request.urlopen(req, timeout=60) as response:
+                    result = json.loads(response.read().decode("utf-8"))
+                    text = result["choices"][0]["message"]["content"]
+                    text = text.replace("```json", "").replace("```", "").strip()
+                    start = text.find("{")
+                    end = text.rfind("}") + 1
+                    if start == -1 or end == 0:
+                        raise ValueError("No JSON found in response")
+                    parsed = json.loads(text[start:end])
+                    logger.info("ATS: Success with " + model)
+                    return parsed
+
+            except urllib.error.HTTPError as e:
+                err = e.read().decode("utf-8")
+                logger.error("ATS HTTPError " + model + ": " + err)
+                errors.append(model + ": " + err)
+                continue
+            except Exception as e:
+                logger.error("ATS Error " + model + ": " + str(e))
+                errors.append(model + ": " + str(e))
+                continue
+
+        return JSONResponse({"error": "All models failed", "details": errors}, status_code=500)
+
+    except Exception as e:
+        logger.error("ATS Fatal: " + traceback.format_exc())
+        return JSONResponse({"error": str(e)}, status_code=500)
