@@ -34,7 +34,7 @@ function App() {
       <nav className="navbar navbar-expand-lg navbar-dark fixed-top" style={{background:"linear-gradient(135deg,#0f0c29,#302b63,#24243e)",boxShadow:"0 2px 20px rgba(0,0,0,0.3)"}}>
         <div className="container" style={{display:"flex",alignItems:"center",justifyContent:"space-between"}}>
           <a className="navbar-brand fw-bold fs-4" href="#" onClick={()=>setPage("home")}>
-            <span style={{color:"#a78bfa"}}>⚡</span> ResumeAI
+            ResumeAI
           </a>
           <div style={{display:"flex",gap:"0.5rem",alignItems:"center"}}>
             <button onClick={()=>setPage("home")} className="btn btn-sm px-3 py-1 rounded-pill fw-semibold" style={{background:page==="home"?"linear-gradient(135deg,#a78bfa,#7c3aed)":"transparent",color:"white",border:"1px solid rgba(167,139,250,0.4)",fontSize:"0.85rem",transition:"all 0.3s"}}>
@@ -118,4 +118,5 @@ function App() {
   );
 }
 export default App;
+
 
