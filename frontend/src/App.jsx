@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+ï»¿import React, { useState } from "react";
 import ResumeForm from "./components/ResumeForm";
 import ResumePreview from "./components/ResumePreview";
 import ATSChecker from "./components/ATSChecker";
@@ -34,7 +34,7 @@ function App() {
       <nav className="navbar navbar-expand-lg navbar-dark fixed-top" style={{background:"linear-gradient(135deg,#0f0c29,#302b63,#24243e)",boxShadow:"0 2px 20px rgba(0,0,0,0.3)"}}>
         <div className="container" style={{display:"flex",alignItems:"center",justifyContent:"space-between"}}>
           <a className="navbar-brand fw-bold fs-4" href="#" onClick={()=>setPage("home")}>
-            <span style={{color:"#a78bfa"}}>?</span> ResumeAI
+            <span style={{color:"#a78bfa"}}>âš¡</span> ResumeAI
           </a>
           <div style={{display:"flex",gap:"0.5rem",alignItems:"center"}}>
             <button onClick={()=>setPage("home")} className="btn btn-sm px-3 py-1 rounded-pill fw-semibold" style={{background:page==="home"?"linear-gradient(135deg,#a78bfa,#7c3aed)":"transparent",color:"white",border:"1px solid rgba(167,139,250,0.4)",fontSize:"0.85rem",transition:"all 0.3s"}}>
@@ -62,7 +62,7 @@ function App() {
           <div className="container py-4">
             <div className="row justify-content-center text-center mb-4">
               <div className="col-lg-8">
-                <span className="badge px-3 py-2 mb-3" style={{background:"rgba(167,139,250,0.2)",color:"#a78bfa",border:"1px solid rgba(167,139,250,0.3)",borderRadius:"20px"}}>AI-Powered · Instant · Professional</span>
+                <span className="badge px-3 py-2 mb-3" style={{background:"rgba(167,139,250,0.2)",color:"#a78bfa",border:"1px solid rgba(167,139,250,0.3)",borderRadius:"20px"}}>AI-Powered Â· Instant Â· Professional</span>
                 <h1 className="fw-bold mb-3" style={{fontSize:"clamp(2rem,5vw,3.5rem)",color:"white",lineHeight:1.2}}>
                   Build Your Dream <br/>
                   <span style={{background:"linear-gradient(135deg,#a78bfa,#7c3aed,#ec4899)",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>Resume</span> in Seconds
@@ -95,7 +95,7 @@ function App() {
               <div className="row justify-content-center mb-3">
                 <div className="col-lg-10">
                   <div onClick={()=>setPage("ats")} style={{background:"linear-gradient(135deg,rgba(167,139,250,0.15),rgba(124,58,237,0.15))",border:"1px solid rgba(167,139,250,0.4)",borderRadius:"12px",padding:"0.75rem 1.25rem",cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"space-between",transition:"all 0.3s"}}>
-                    <span style={{color:"#a78bfa",fontWeight:"600",fontSize:"0.9rem"}}>?? Check your ATS Score — see how well your resume performs!</span>
+                    <span style={{color:"#a78bfa",fontWeight:"600",fontSize:"0.9rem"}}>?? Check your ATS Score â€” see how well your resume performs!</span>
                     <span style={{color:"#a78bfa",fontWeight:"700",fontSize:"0.9rem"}}>Check Now ?</span>
                   </div>
                 </div>
@@ -110,7 +110,7 @@ function App() {
               </div>
             </div>
           </div>
-          <div className="text-center py-3" style={{color:"rgba(255,255,255,0.3)",fontSize:"0.8rem"}}>Built with Claude AI · ResumeAI © 2026 · Made for Students</div>
+          <div className="text-center py-3" style={{color:"rgba(255,255,255,0.3)",fontSize:"0.8rem"}}>Built with Claude AI Â· ResumeAI Â© 2026 Â· Made for Students</div>
         </div>
       )}
       <style>{`@import url('https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600&display=swap');*{font-family:'DM Sans',sans-serif;box-sizing:border-box;}h1,.navbar-brand{font-family:'Syne',sans-serif!important;}body{margin:0;background:#0f0c29;}::-webkit-scrollbar{width:6px;}::-webkit-scrollbar-thumb{background:#a78bfa;border-radius:3px;}`}</style>
@@ -118,3 +118,4 @@ function App() {
   );
 }
 export default App;
+
