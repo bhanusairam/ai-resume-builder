@@ -32,9 +32,11 @@ async def generate_resume(request: Request):
         prompt = (
             "You are a resume designer. Create a " + template.upper() + " resume in pure HTML with inline styles only. "
             "No markdown, no backticks, no explanation. Return ONLY raw HTML starting with <div. "
+            "Make it professional, well-structured and ATS-friendly. "
             "Name: " + str(data.get("name","")) +
             ", Email: " + str(data.get("email","")) +
             ", Phone: " + str(data.get("phone","")) +
+            ", LinkedIn: " + str(data.get("linkedin","")) +
             ", Education: " + str(data.get("education","")) +
             ", Skills: " + str(data.get("skills","")) +
             ", Experience: " + str(data.get("experience","")) +
@@ -43,12 +45,12 @@ async def generate_resume(request: Request):
         )
 
         MODELS = [
-            "openrouter/free",
             "deepseek/deepseek-v4-flash:free",
             "meta-llama/llama-3.3-70b-instruct:free",
             "nvidia/nemotron-3-super-120b-a12b:free",
             "z-ai/glm-4.5-air:free",
             "qwen/qwen3-coder:free",
+            "mistralai/mistral-7b-instruct:free",
         ]
 
         errors = []
@@ -97,6 +99,7 @@ async def generate_resume(request: Request):
     except Exception as e:
         logger.error("Fatal: " + traceback.format_exc())
         return JSONResponse({"error": str(e), "trace": traceback.format_exc()}, status_code=500)
+
 @app.post("/api/ats-score")
 async def ats_score(request: Request):
     try:
@@ -111,10 +114,7 @@ async def ats_score(request: Request):
         if not api_key:
             return JSONResponse({"error": "OPENROUTER_API_KEY not set"}, status_code=500)
 
-        job_section = (
-            f"\nJob Description:\n{job_desc}\n"
-            if job_desc else ""
-        )
+        job_section = (f"\nJob Description:\n{job_desc}\n" if job_desc else "")
 
         prompt = (
             "You are an ATS (Applicant Tracking System) expert. "
@@ -138,12 +138,12 @@ async def ats_score(request: Request):
         )
 
         MODELS = [
-            "openai/gpt-oss-20b:free",
             "deepseek/deepseek-v4-flash:free",
             "meta-llama/llama-3.3-70b-instruct:free",
             "nvidia/nemotron-3-super-120b-a12b:free",
             "z-ai/glm-4.5-air:free",
             "qwen/qwen3-coder:free",
+            "mistralai/mistral-7b-instruct:free",
         ]
 
         errors = []
